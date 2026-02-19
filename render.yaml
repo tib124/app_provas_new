@@ -3,8 +3,8 @@ services:
     name: app_provas
     env: ruby
     plan: free
-    buildCommand: bundle install && bundle exec rake assets:precompile
-    startCommand: ./bin/render-build.sh
+    buildCommand: ./bin/render-build.sh
+    startCommand: bundle exec puma -C config/puma.rb
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -14,15 +14,11 @@ services:
         sync: false
       - key: RAILS_ENV
         value: production
+      - key: SECRET_KEY_BASE
+        generateValue: true
 
 databases:
   - name: app_provas_db
     databaseName: app_provas_production
     plan: free
     region: ohio
-
-
-#comentario teste
-
-
-#ck e tarada
