@@ -7,7 +7,9 @@ class ProvasController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :prova_not_found
 
   def index
-    @provas = current_user.provas.order(data_criacao: :desc, created_at: :desc)
+    @provas = current_user.provas
+                          .includes(:aluno, questoes: :gabarito)
+                          .order(data_criacao: :desc, created_at: :desc)
   end
 
   def show
