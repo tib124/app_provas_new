@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_13_185534) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_19_122139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,8 +49,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_13_185534) do
     t.string "nome", null: false
     t.string "email", null: false
     t.bigint "usuario_id", null: false
+    t.bigint "turma_id"
     t.index ["email"], name: "index_alunos_on_email"
     t.index ["ra"], name: "index_alunos_on_ra", unique: true
+    t.index ["turma_id"], name: "index_alunos_on_turma_id"
     t.index ["usuario_id"], name: "index_alunos_on_usuario_id"
   end
 
@@ -92,6 +94,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_13_185534) do
     t.index ["prova_id"], name: "index_questaos_on_prova_id"
   end
 
+  create_table "turmas", force: :cascade do |t|
+    t.string "nome", null: false
+    t.bigint "usuario_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["usuario_id"], name: "index_turmas_on_usuario_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -108,10 +118,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_13_185534) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "alunos", "turmas"
   add_foreign_key "alunos", "users", column: "usuario_id"
   add_foreign_key "gabaritos", "provas"
   add_foreign_key "gabaritos", "questoes"
   add_foreign_key "provas", "alunos", column: "aluno_ra", primary_key: "ra"
   add_foreign_key "provas", "users", column: "usuario_id"
   add_foreign_key "questoes", "provas"
+  add_foreign_key "turmas", "users", column: "usuario_id"
 end

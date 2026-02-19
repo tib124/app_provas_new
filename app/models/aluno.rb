@@ -2,6 +2,7 @@
 
 class Aluno < ApplicationRecord
   belongs_to :usuario, class_name: "User", inverse_of: :alunos
+  belongs_to :turma, optional: true, inverse_of: :alunos
   has_many :provas, foreign_key: :aluno_ra, primary_key: :ra, dependent: :nullify, inverse_of: :aluno
 
   before_validation :normalize_ra

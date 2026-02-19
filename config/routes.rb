@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :turmas
+
   resources :provas, only: %i[index show new create edit update destroy] do
     collection do
       get :import

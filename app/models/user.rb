@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :provas, foreign_key: :usuario_id, dependent: :destroy, inverse_of: :usuario
   has_many :alunos, foreign_key: :usuario_id, dependent: :destroy, inverse_of: :usuario
+  has_many :turmas, foreign_key: :usuario_id, dependent: :destroy, inverse_of: :usuario
 
   has_one_attached :avatar, dependent: :purge
 

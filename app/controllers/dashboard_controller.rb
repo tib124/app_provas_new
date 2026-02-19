@@ -16,5 +16,6 @@ class DashboardController < ApplicationController
     @provas_this_month = current_user.provas
                                      .where(created_at: Time.current.beginning_of_month..)
                                      .count
+    @turmas_count = current_user.turmas.count
   end
 end
