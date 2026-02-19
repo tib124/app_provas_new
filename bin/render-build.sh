@@ -7,7 +7,7 @@ bundle install
 echo "==> Precompiling assets..."
 bundle exec rails assets:precompile
 
-echo "==> Running database migrations..."
-bundle exec rails db:migrate
+echo "==> Running database setup..."
+bundle exec rails db:prepare
 
 echo "==> Build complete!"
