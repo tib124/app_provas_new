@@ -1,0 +1,108 @@
+<div class="space-y-8">
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- HEADER                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <header>
+    <%= link_to dashboard_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group mb-5" do %>
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Dashboard
+    <% end %>
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Minhas turmas</h1>
+        <p class="text-sm text-slate-500 mt-0.5">Organize seus alunos em turmas para facilitar a gestão</p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <%= link_to new_turma_path, class: "inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors duration-150" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Nova turma
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <% if @turmas.any? %>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- STATS BAR                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div class="relative rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm overflow-hidden">
+        <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl bg-teal-500"></div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Turmas</p>
+        <p class="text-2xl font-extrabold text-slate-900"><%= @turmas.size %></p>
+      </div>
+      <div class="relative rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm overflow-hidden">
+        <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl bg-violet-500"></div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Total de alunos</p>
+        <p class="text-2xl font-extrabold text-slate-900"><%= @turmas.sum { |t| t.alunos.size } %></p>
+      </div>
+      <div class="relative rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm overflow-hidden">
+        <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl bg-amber-500"></div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Média por turma</p>
+        <p class="text-2xl font-extrabold text-slate-900"><%= @turmas.any? ? (@turmas.sum { |t| t.alunos.size }.to_f / @turmas.size).round(1) : 0 %></p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- TURMAS GRID                                                -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% turma_colors = [
+        { accent: 'bg-teal-500', bg: 'bg-teal-50', text: 'text-teal-600', icon_bg: 'bg-teal-100' },
+        { accent: 'bg-indigo-500', bg: 'bg-indigo-50', text: 'text-indigo-600', icon_bg: 'bg-indigo-100' },
+        { accent: 'bg-amber-500', bg: 'bg-amber-50', text: 'text-amber-600', icon_bg: 'bg-amber-100' },
+        { accent: 'bg-rose-500', bg: 'bg-rose-50', text: 'text-rose-600', icon_bg: 'bg-rose-100' },
+        { accent: 'bg-violet-500', bg: 'bg-violet-50', text: 'text-violet-600', icon_bg: 'bg-violet-100' },
+        { accent: 'bg-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-600', icon_bg: 'bg-emerald-100' }
+      ] %>
+
+      <% @turmas.each_with_index do |turma, index| %>
+        <% colors = turma_colors[index % turma_colors.length] %>
+        <% alunos_count = turma.alunos.size %>
+
+        <%= link_to turma_path(turma), class: "group block" do %>
+          <div class="relative rounded-2xl bg-white border border-slate-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+            <div class="absolute inset-y-0 left-0 w-1 rounded-l-2xl <%= colors[:accent] %>"></div>
+
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-10 h-10 rounded-xl <%= colors[:bg] %> <%= colors[:text] %> flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              </div>
+              <svg class="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </div>
+
+            <h3 class="text-sm font-bold text-slate-900 mb-1 truncate group-hover:<%= colors[:text] %> transition-colors"><%= turma.nome %></h3>
+
+            <div class="flex items-center gap-3 mt-3">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md <%= colors[:bg] %> text-xs font-semibold <%= colors[:text] %>">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <%= alunos_count %> aluno<%= alunos_count != 1 ? 's' : '' %>
+              </span>
+              <span class="text-xs text-slate-400">Criada em <%= turma.created_at.strftime("%d/%m/%Y") %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+  <% else %>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- EMPTY STATE                                                -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-12 text-center">
+      <div class="mx-auto w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center mb-4">
+        <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      </div>
+      <h3 class="text-sm font-bold text-slate-900 mb-1">Nenhuma turma criada</h3>
+      <p class="text-xs text-slate-500 max-w-xs mx-auto mb-5">Crie turmas para organizar seus alunos e facilitar a gestão de provas.</p>
+      <div class="flex items-center justify-center">
+        <%= link_to new_turma_path, class: "inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors duration-150" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Criar primeira turma
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

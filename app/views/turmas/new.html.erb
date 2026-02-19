@@ -1,0 +1,13 @@
+<div class="max-w-2xl mx-auto space-y-6">
+  <header>
+    <%= link_to turmas_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group mb-5" do %>
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Turmas
+    <% end %>
+
+    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Nova turma</h1>
+    <p class="text-sm text-slate-500 mt-0.5">Crie uma turma para organizar seus alunos</p>
+  </header>
+
+  <%= render "form", turma: @turma %>
+</div>

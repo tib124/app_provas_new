@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   get "dashboard" => "dashboard#show", as: :dashboard
@@ -11,10 +11,15 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :turmas
+
   resources :provas, only: %i[index show new create edit update destroy] do
     collection do
       get :import
       post :process_import
+    end
+    member do
+      post :corrigir_ia
     end
     get "gabarito" => "gabaritos#index", as: :gabarito
 
