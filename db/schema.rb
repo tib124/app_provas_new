@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_19_122139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "alunos", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -21,8 +49,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
     t.string "nome", null: false
     t.string "email", null: false
     t.bigint "usuario_id", null: false
+    t.bigint "turma_id"
     t.index ["email"], name: "index_alunos_on_email"
     t.index ["ra"], name: "index_alunos_on_ra", unique: true
+    t.index ["turma_id"], name: "index_alunos_on_turma_id"
     t.index ["usuario_id"], name: "index_alunos_on_usuario_id"
   end
 
@@ -32,6 +62,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "questao_id"
+    t.string "avaliacao_ia"
+    t.text "justificativa_ia"
     t.index ["prova_id"], name: "index_gabaritos_on_prova_id"
     t.index ["questao_id"], name: "index_gabaritos_on_questao_id", unique: true
   end
@@ -43,7 +75,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
     t.string "titulo", null: false
     t.date "data_criacao", default: -> { "CURRENT_DATE" }, null: false
     t.string "aluno_ra"
+    t.string "slug", null: false
     t.index ["aluno_ra"], name: "index_provas_on_aluno_ra"
+    t.index ["slug"], name: "index_provas_on_slug", unique: true
     t.index ["usuario_id", "data_criacao"], name: "index_provas_on_usuario_id_and_data_criacao"
     t.index ["usuario_id"], name: "index_provas_on_usuario_id"
   end
@@ -60,6 +94,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
     t.index ["prova_id"], name: "index_questaos_on_prova_id"
   end
 
+  create_table "turmas", force: :cascade do |t|
+    t.string "nome", null: false
+    t.bigint "usuario_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["usuario_id"], name: "index_turmas_on_usuario_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -74,10 +116,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_113519) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "alunos", "turmas"
   add_foreign_key "alunos", "users", column: "usuario_id"
   add_foreign_key "gabaritos", "provas"
   add_foreign_key "gabaritos", "questoes"
   add_foreign_key "provas", "alunos", column: "aluno_ra", primary_key: "ra"
   add_foreign_key "provas", "users", column: "usuario_id"
   add_foreign_key "questoes", "provas"
+  add_foreign_key "turmas", "users", column: "usuario_id"
 end

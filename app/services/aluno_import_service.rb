@@ -7,12 +7,15 @@ class AlunoImportService
   HEADER_ALIASES = {
     'ra' => 'ra', 'RA' => 'ra', 'Ra' => 'ra', 'matricula' => 'ra', 'registro' => 'ra',
     'nome' => 'nome', 'Nome' => 'nome', 'NOME' => 'nome', 'name' => 'nome',
-    'email' => 'email', 'Email' => 'email', 'EMAIL' => 'email', 'e-mail' => 'email', 'E-mail' => 'email'
+    'email' => 'email', 'Email' => 'email', 'EMAIL' => 'email', 'e-mail' => 'email', 'E-mail' => 'email',
+    'turma' => 'turma', 'Turma' => 'turma', 'TURMA' => 'turma', 'classe' => 'turma', 'Classe' => 'turma', 'class' => 'turma'
   }.freeze
 
-  def initialize(usuario, csv_file)
+  def initialize(usuario, csv_file, default_turma_id: nil)
     @usuario = usuario
     @csv_file = csv_file
+    @default_turma_id = default_turma_id.presence
+    @turma_cache = {}
   end
 
   def call
@@ -160,6 +163,7 @@ class AlunoImportService
     ra = row['ra']&.to_s&.strip&.upcase
     nome = row['nome']&.to_s&.strip
     email = row['email']&.to_s&.strip&.downcase
+    turma_nome = row['turma']&.to_s&.strip.presence
 
     # Pular linhas completamente vazias
     if ra.blank? && nome.blank? && email.blank?
@@ -179,10 +183,15 @@ class AlunoImportService
       }
     end
 
+    # Resolver turma: coluna CSV tem prioridade, senão usa a turma padrão do formulário
+    turma_id = resolve_turma_id(turma_nome)
+
     aluno = @usuario.alunos.find_or_initialize_by(ra: ra)
+    attrs = { nome: nome, email: email }
+    attrs[:turma_id] = turma_id unless turma_id.nil? && turma_nome.nil? && @default_turma_id.nil?
 
     if aluno.new_record?
-      aluno.assign_attributes(nome: nome, email: email)
+      aluno.assign_attributes(attrs)
 
       if aluno.save
         { status: :created }
@@ -190,11 +199,20 @@ class AlunoImportService
         { status: :failed, error: "Linha #{line_number} (#{ra}): #{aluno.errors.full_messages.join(', ')}" }
       end
     else
-      if aluno.update(nome: nome, email: email)
+      if aluno.update(attrs)
         { status: :updated }
       else
         { status: :failed, error: "Linha #{line_number} (#{ra}): #{aluno.errors.full_messages.join(', ')}" }
       end
+    end
+  end
+
+  def resolve_turma_id(turma_nome)
+    if turma_nome.present?
+      # Cache para evitar queries repetidas
+      @turma_cache[turma_nome] ||= @usuario.turmas.find_or_create_by!(nome: turma_nome).id
+    elsif @default_turma_id
+      @default_turma_id.to_i
     end
   end
 

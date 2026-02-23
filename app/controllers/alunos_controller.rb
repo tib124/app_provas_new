@@ -3,7 +3,7 @@ class AlunosController < ApplicationController
   before_action :set_aluno, only: %i[edit update destroy]
 
   def index
-    @alunos = current_user.alunos.order(nome: :asc)
+    @alunos = current_user.alunos.includes(:turma, :provas).order(nome: :asc)
   end
 
   def new
@@ -32,7 +32,7 @@ class AlunosController < ApplicationController
     end
 
     begin
-      result = AlunoImportService.new(current_user, csv_file).call
+      result = AlunoImportService.new(current_user, csv_file, default_turma_id: params[:turma_id]).call
 
       if result[:success]
         redirect_to alunos_path, notice: result[:message]
@@ -69,11 +69,11 @@ class AlunosController < ApplicationController
   end
 
   def aluno_params_create
-    params.require(:aluno).permit(:ra, :nome, :email)
+    params.require(:aluno).permit(:ra, :nome, :email, :turma_id)
   end
 
   def aluno_params_update
-    params.require(:aluno).permit(:nome, :email)
+    params.require(:aluno).permit(:nome, :email, :turma_id)
   end
 end
 
