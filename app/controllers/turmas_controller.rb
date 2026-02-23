@@ -3,11 +3,11 @@ class TurmasController < ApplicationController
   before_action :set_turma, only: %i[show edit update destroy]
 
   def index
-    @turmas = current_user.turmas.includes(:alunos).order(nome: :asc)
+    @turmas = current_user.turmas.includes(alunos: { provas: { questoes: :gabarito } }).order(nome: :asc)
   end
 
   def show
-    @alunos = @turma.alunos.order(nome: :asc)
+    @alunos = @turma.alunos.includes(provas: { questoes: :gabarito }).order(nome: :asc)
   end
 
   def new
