@@ -62,7 +62,14 @@ class DissertativaGraderService
       messages: [
         {
           role: "system",
-          content: "Você é um professor avaliando questões dissertativas. Responda SEMPRE exatamente neste formato (duas linhas):\nAVALIACAO: total\nJUSTIFICATIVA: explicação curta\n\nSubstitua 'total' por 'parcial' ou 'incorreta' conforme a avaliação."
+          content: <<~SYS.chomp
+            Você é um professor que corrige provas. Sua tarefa é fornecer **até três linhas** no seguinte formato:
+            Linha 1: AVALIACAO: <total|parcial|incorreta>
+            Linha 2: JUSTIFICATIVA: <uma explicação rica de pelo menos duas frases>
+            Linha 3: (opcional) qualquer complemento curto, mas o total não pode exceder três linhas.
+
+            **Quando a resposta estiver incorreta ou parcial, a justificativa deve detalhar por que foi errada**, mencionando os conceitos envolvidos e onde o aluno se enganou. Não escreva mais que três linhas no total. Não inclua instruções para o aluno ou linguagem de sistema.
+          SYS
         },
         {
           role: "user",
@@ -91,8 +98,11 @@ class DissertativaGraderService
     data = JSON.parse(body)
     text = data.dig("choices", 0, "message", "content").to_s.strip
 
-    avaliacao = extrair_avaliacao(text)
-    justificativa = extrair_justificativa(text)
+    # split on lines up to 3; ignore extras
+    lines = text.split("\n").map(&:strip)
+    avaliacao = extrair_avaliacao(lines.first.to_s)
+    # take up to two additional lines for justification
+    justificativa = lines[1..2]&.join(" ")&.strip.to_s
 
     {
       avaliacao: avaliacao,

@@ -10,6 +10,11 @@ class ProvasController < ApplicationController
     @provas = current_user.provas
                           .includes(:aluno, questoes: :gabarito)
                           .order(data_criacao: :desc, created_at: :desc)
+
+
+    if params[:aluno_ra].present?
+      @provas = @provas.where(aluno_ra: params[:aluno_ra])
+    end
   end
 
   def show

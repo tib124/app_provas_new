@@ -26,7 +26,17 @@
 
   <% if @provas.any? %>
     <!-- Summary bar -->
-    <div class="flex items-center gap-6 mb-6 px-1">
+    <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-6 px-1">
+      <% if params[:aluno_ra].present? %>
+        <% filtered_aluno = current_user.alunos.find_by(ra: params[:aluno_ra]) %>
+        <% if filtered_aluno %>
+          <p class="text-sm text-slate-600">
+            Mostrando provas de <strong><%= filtered_aluno.nome %></strong> (<%= filtered_aluno.ra %>)
+            — <%= link_to "mostrar todas", provas_path, class: "text-indigo-600 hover:underline" %>
+          </p>
+        <% end %>
+      <% end %>
+
       <p class="text-sm text-slate-500">
         <span class="font-bold text-slate-800"><%= @provas.size %></span> prova<%= @provas.size != 1 ? 's' : '' %> encontrada<%= @provas.size != 1 ? 's' : '' %>
       </p>
