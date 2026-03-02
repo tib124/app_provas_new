@@ -1,6 +1,9 @@
 <div class="space-y-6">
   <div>
-    <%= link_to "← Voltar para a prova", prova_path(@prova), class: "text-sm font-semibold text-slate-700 hover:text-slate-900" %>
+    <%= link_to prova_path(@prova), class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group" do %>
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      <%= @prova.titulo %>
+    <% end %>
   </div>
 
   <div class="flex items-end justify-between gap-4">

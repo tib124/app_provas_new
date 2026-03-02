@@ -22,12 +22,18 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <%= render "layouts/alerts" %>
-
+  <body class="bg-slate-50/50 min-h-screen">
     <% if respond_to?(:devise_controller?) && devise_controller? %>
+      <%= render "layouts/alerts" %>
       <%= yield %>
+    <% elsif user_signed_in? %>
+      <%= render "layouts/navbar" %>
+      <%= render "layouts/alerts" %>
+      <main class="container mx-auto mt-8 px-5 pb-12">
+        <%= yield %>
+      </main>
     <% else %>
+      <%= render "layouts/alerts" %>
       <main class="container mx-auto mt-12 px-5">
         <%= yield %>
       </main>

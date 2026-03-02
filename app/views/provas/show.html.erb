@@ -1,6 +1,9 @@
 <div class="space-y-6">
   <div>
-    <%= link_to "← Voltar para o dashboard", dashboard_path, class: "text-sm font-semibold text-slate-700 hover:text-slate-900" %>
+    <%= link_to provas_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group" do %>
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      Provas
+    <% end %>
   </div>
 
   <div class="flex items-end justify-between gap-4">
@@ -33,7 +36,6 @@
       <% end %>
     </div>
     <div class="flex gap-2">
-      <%= link_to "Voltar", provas_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300/80 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2" %>
       <%= link_to "Editar", edit_prova_path(@prova), class: "inline-flex items-center justify-center rounded-xl border border-slate-300/80 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2" %>
       <% if @prova.questoes.joins(:gabarito).where(tipo: "dissertativa").exists? %>
         <%= button_to "🤖 Corrigir com IA", corrigir_ia_prova_path(@prova), method: :post, data: { turbo_confirm: "Isso vai enviar as questões dissertativas para avaliação com IA. Pode levar alguns segundos. Continuar?" }, class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-violet-200/60 transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2" %>

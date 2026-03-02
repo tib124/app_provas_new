@@ -1,6 +1,12 @@
 <div class="mx-auto max-w-3xl space-y-6">
-  <div>
-    <%= link_to "← Voltar para o gabarito", prova_gabarito_path(@prova), class: "text-sm font-semibold text-slate-700 hover:text-slate-900" %>
+  <div class="flex items-center gap-1.5 text-sm text-slate-400">
+    <%= link_to prova_path(@prova), class: "font-medium hover:text-slate-600 transition-colors" do %>
+      <%= @prova.titulo %>
+    <% end %>
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    <%= link_to prova_gabarito_path(@prova), class: "font-medium hover:text-slate-600 transition-colors" do %>
+      Gabarito
+    <% end %>
   </div>
 
   <div>

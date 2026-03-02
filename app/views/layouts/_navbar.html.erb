@@ -1,0 +1,63 @@
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200/80 shadow-sm">
+  <div class="container mx-auto px-5">
+    <div class="flex items-center justify-between h-14">
+      <!-- Left: Logo + Nav Links -->
+      <div class="flex items-center gap-6">
+        <%= link_to dashboard_path, class: "flex items-center gap-2 shrink-0" do %>
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+          </div>
+          <span class="text-sm font-bold text-slate-900 hidden sm:inline">Provas App</span>
+        <% end %>
+
+        <div class="hidden sm:flex items-center gap-1">
+          <% nav_items = [
+            { label: "Dashboard", path: dashboard_path, icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6", active_test: "dashboard" },
+            { label: "Provas", path: provas_path, icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", active_test: "provas" },
+            { label: "Alunos", path: alunos_path, icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z", active_test: "alunos" },
+            { label: "Turmas", path: turmas_path, icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z", active_test: "turmas" }
+          ] %>
+
+          <% nav_items.each do |item| %>
+            <% is_active = controller_name == item[:active_test] %>
+            <%= link_to item[:path], class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150 #{is_active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="<%= item[:icon] %>"/></svg>
+              <%= item[:label] %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Right: User menu -->
+      <div class="flex items-center gap-2">
+        <%= link_to edit_user_registration_path, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors duration-150" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span class="hidden sm:inline">Perfil</span>
+        <% end %>
+        <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors duration-150" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span class="hidden sm:inline">Sair</span>
+        <% end %>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button type="button" class="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <div id="mobile-nav" class="hidden sm:hidden pb-3 border-t border-slate-100 mt-1 pt-2 space-y-1">
+      <% nav_items_mobile = [
+        { label: "Dashboard", path: dashboard_path, active_test: "dashboard" },
+        { label: "Provas", path: provas_path, active_test: "provas" },
+        { label: "Alunos", path: alunos_path, active_test: "alunos" },
+        { label: "Turmas", path: turmas_path, active_test: "turmas" }
+      ] %>
+      <% nav_items_mobile.each do |item| %>
+        <% is_active = controller_name == item[:active_test] %>
+        <%= link_to item[:label], item[:path], class: "block px-3 py-2 rounded-lg text-sm font-medium #{is_active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50'}" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

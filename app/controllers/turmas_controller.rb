@@ -18,7 +18,7 @@ class TurmasController < ApplicationController
     @turma = current_user.turmas.new(turma_params)
 
     if @turma.save
-      redirect_to turmas_path, notice: "Turma criada com sucesso."
+      redirect_to turma_path(@turma), notice: "Turma criada com sucesso."
     else
       render :new, status: :unprocessable_entity
     end

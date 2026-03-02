@@ -1,7 +1,4 @@
 prova_titulo,aluno_ra,data_criacao,questao_enunciado,questao_tipo,questao_peso,questao_respostas,resposta_colocada,resposta_correta
-Prova de Matemática,A123456,2026-02-19,Quanto é 7 x 8?,multipla_escolha,2.0,A) 54 | B) 56 | C) 58 | D) 64,B,B
-Prova de Matemática,A123456,2026-02-19,Qual é a raiz quadrada de 144?,multipla_escolha,2.0,A) 10 | B) 11 | C) 12 | D) 14,C,C
-Prova de Matemática,A123456,2026-02-19,Explique o que é uma equação de segundo grau,dissertativa,3.0,,É uma equação que tem x ao quadrado,Equação polinomial de grau 2 na forma ax² + bx + c = 0
-Prova de História,B654321,2026-02-19,Em que ano o Brasil foi descoberto?,multipla_escolha,2.0,A) 1492 | B) 1500 | C) 1530 | D) 1549,B,B
-Prova de História,B654321,2026-02-19,Quem proclamou a independência do Brasil?,multipla_escolha,2.0,A) Tiradentes | B) D. Pedro I | C) D. Pedro II | D) Getúlio Vargas,B,B
-Prova de História,B654321,2026-02-19,Descreva as causas da Revolução Francesa,dissertativa,3.0,,Desigualdade social e crise econômica na França,Crise financeira do Estado absolutista e insatisfação do Terceiro Estado com os privilégios da nobreza e clero
+Prova de Matemática,M123456,2026-02-19,Quanto é 7 x 8?,multipla_escolha,2.0,A) 54 | B) 56 | C) 58 | D) 64,B,B
+Prova de Matemática,M123456,2026-02-19,Qual é a raiz quadrada de 144?,multipla_escolha,2.0,A) 10 | B) 11 | C) 12 | D) 14,C,C
+Prova de Matemática,M123456,2026-02-19,Explique o que é uma equação de segundo grau,dissertativa,3.0,,É uma equação que tem x ao quadrado,Equação polinomial de grau 2 na forma ax² + bx + c = 0
