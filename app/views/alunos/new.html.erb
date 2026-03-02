@@ -1,15 +1,34 @@
-<div class="space-y-6">
-  <div>
+<div class="mx-auto max-w-3xl">
+  <div class="mb-6">
     <%= link_to alunos_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group" do %>
       <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      Alunos
+      Voltar para alunos
     <% end %>
+
+    <div class="mt-4 flex items-start gap-4">
+      <div class="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-200/50">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Cadastrar novo aluno</h1>
+        <p class="mt-1 text-sm text-slate-500">Preencha as informações abaixo em 3 etapas simples.</p>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <p class="text-sm font-semibold text-slate-600">Aluno</p>
-    <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Novo aluno</h1>
-    <p class="mt-1 text-slate-600">Cadastre o RA, nome e e-mail.</p>
+  <%# ── Dica rápida ── %>
+  <div class="mb-6 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4">
+    <div class="flex items-start gap-3">
+      <div class="shrink-0 mt-0.5">
+        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-indigo-900">Dica rápida</p>
+        <p class="mt-0.5 text-xs text-indigo-700/80">Precisa cadastrar muitos alunos? Use a opção
+          <%= link_to "Importar CSV", import_alunos_path, class: "font-semibold underline decoration-indigo-300 hover:decoration-indigo-500" %>
+          para adicionar vários de uma vez.</p>
+      </div>
+    </div>
   </div>
 
   <%= render "form", aluno: @aluno %>
