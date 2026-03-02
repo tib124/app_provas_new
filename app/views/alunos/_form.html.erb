@@ -2,7 +2,7 @@
   <%= form_with model: aluno, class: "space-y-4" do |f| %>
     <% if aluno.errors.any? %>
       <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 ring-1 ring-rose-100">
-        <p class="font-semibold">Verifique os campos:</p>
+        <p class="font-semibold">Verifique os camposss:</p>
         <ul class="mt-2 list-disc pl-5">
           <% aluno.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>
