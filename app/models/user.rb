@@ -16,8 +16,7 @@ class User < ApplicationRecord
            presence: true,
            length: { maximum: 30 },
            format: { with: /\A[a-zA-Z0-9_.]+\z/, message: "use apenas letras, números, _ ou ." },
-           uniqueness: { case_sensitive: false },
-           on: :create
+           uniqueness: { case_sensitive: false }
 
   validate :avatar_size
   validate :avatar_content_type

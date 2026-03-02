@@ -58,10 +58,9 @@ class GabaritosController < ApplicationController
 
   def set_gabarito
     @gabarito = @questao.gabarito
-    return if @gabarito.present?
-
-    redirect_to new_prova_questao_gabarito_path(@prova, @questao), alert: "Crie o gabarito desta questão primeiro."
-    nil
+    unless @gabarito.present?
+      redirect_to new_prova_questao_gabarito_path(@prova, @questao), alert: "Crie o gabarito desta questão primeiro."
+    end
   end
 
   def gabarito_params

@@ -6,6 +6,13 @@
     <% end %>
   </div>
 
+  <% correction = ProvaCorrectionService.new(@prova) %>
+  <% score = correction.calculate_score %>
+  <% max_score = correction.calculate_max_score %>
+  <% percentage = correction.calculate_percentage %>
+  <% details = correction.get_details %>
+  <% tem_pendentes = details.any? { |d| d[:avaliacao_ia] == "pendente" } %>
+
   <div class="flex items-end justify-between gap-4">
     <div>
       <p class="text-sm font-semibold text-slate-600">Prova</p>
@@ -17,22 +24,16 @@
           <span class="text-slate-500">—</span>
           <span class="font-semibold text-slate-900"><%= @prova.aluno.nome %></span>
         </p>
-        <% correction = ProvaCorrectionService.new(@prova) %>
-        <% score = correction.calculate_score %>
-        <% max_score = correction.calculate_max_score %>
-        <% percentage = correction.calculate_percentage %>
-        <% details = correction.get_details %>
-        <% tem_pendentes = details.any? { |d| d[:avaliacao_ia] == "pendente" } %>
-        <% if max_score > 0 %>
-          <p class="mt-2 text-sm text-slate-600">
-            Pontuação: <span class="font-semibold text-slate-900"><%= score.round(2) %> / <%= max_score.round(2) %></span>
-            <span class="text-slate-500">—</span>
-            <span class="font-semibold <%= percentage >= 70 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-rose-600' %>"><%= percentage %>%</span>
-            <% if tem_pendentes %>
-              <span class="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">⏳ Dissertativas pendentes de correção com IA</span>
-            <% end %>
-          </p>
-        <% end %>
+      <% end %>
+      <% if max_score > 0 %>
+        <p class="mt-2 text-sm text-slate-600">
+          Pontuação: <span class="font-semibold text-slate-900"><%= score.round(2) %> / <%= max_score.round(2) %></span>
+          <span class="text-slate-500">—</span>
+          <span class="font-semibold <%= percentage >= 70 ? 'text-green-600' : percentage >= 50 ? 'text-yellow-600' : 'text-rose-600' %>"><%= percentage %>%</span>
+          <% if tem_pendentes %>
+            <span class="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">⏳ Dissertativas pendentes de correção com IA</span>
+          <% end %>
+        </p>
       <% end %>
     </div>
     <div class="flex gap-2">
@@ -71,7 +72,7 @@
     </div>
   </div>
 
-  <% if defined?(details) && details&.any? %>
+  <% if details.any? %>
     <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm ring-1 ring-black/5">
       <div class="mb-4">
         <p class="text-lg font-semibold text-slate-900">📝 Correção detalhada</p>
@@ -79,9 +80,9 @@
       </div>
 
       <div class="space-y-4">
-        <% @prova.questoes.joins(:gabarito).each_with_index do |questao, idx| %>
-          <% detail = details.find { |d| d[:questao_id] == questao.id } %>
-          <% next unless detail %>
+        <% details.each_with_index do |detail, idx| %>
+          <% questao = @prova.questoes.find { |q| q.id == detail[:questao_id] } %>
+          <% next unless questao %>
           <% is_pendente = detail[:avaliacao_ia] == 'pendente' %>
           <% border_class = if is_pendente
                               'border-blue-200 bg-blue-50/50'

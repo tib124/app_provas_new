@@ -1,14 +1,12 @@
-<div class="mx-auto max-w-2xl">
-  <div class="mb-4">
+<div class="mx-auto max-w-3xl">
+  <div class="mb-6">
     <%= link_to provas_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group" do %>
       <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
       Provas
     <% end %>
-  </div>
 
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Nova prova</h1>
-    <p class="mt-1 text-slate-600">Defina um título, a data de criação e adicione as questões.</p>
+    <h1 class="mt-3 text-2xl font-bold tracking-tight text-slate-900">Nova prova</h1>
+    <p class="mt-1 text-sm text-slate-500">Preencha as informações abaixo em 3 etapas simples.</p>
   </div>
 
   <%= render "form", prova: @prova %>

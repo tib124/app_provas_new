@@ -1,6 +1,7 @@
 class TurmasController < ApplicationController
   before_action :authenticate_user!
   before_action :set_turma, only: %i[show edit update destroy]
+  rescue_from ActiveRecord::RecordNotFound, with: :turma_not_found
 
   def index
     @turmas = current_user.turmas.includes(alunos: { provas: { questoes: :gabarito } }).order(nome: :asc)
@@ -43,7 +44,11 @@ class TurmasController < ApplicationController
   private
 
   def set_turma
-    @turma = current_user.turmas.find(params[:id])
+    @turma = current_user.turmas.find_by!(slug: params[:id])
+  end
+
+  def turma_not_found
+    redirect_to turmas_path, alert: "Turma não encontrada."
   end
 
   def turma_params

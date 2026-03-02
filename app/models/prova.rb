@@ -14,6 +14,7 @@ class Prova < ApplicationRecord
   accepts_nested_attributes_for :questoes, allow_destroy: true, reject_if: :all_blank
 
   validates :titulo, presence: true
+  validates :slug, uniqueness: true, allow_nil: true
   validates :aluno, presence: true, on: :create, unless: :skip_validations
   validate :precisa_ter_pelo_menos_uma_questao, on: :create, unless: :skip_validations
   validate :aluno_deve_pertencer_ao_mesmo_usuario
@@ -62,6 +63,9 @@ class Prova < ApplicationRecord
   end
 
   def generate_slug
-    self.slug = SecureRandom.hex(6)
+    loop do
+      self.slug = SecureRandom.hex(6)
+      break unless Prova.exists?(slug: slug)
+    end
   end
 end

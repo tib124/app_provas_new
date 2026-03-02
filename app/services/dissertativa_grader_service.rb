@@ -124,13 +124,6 @@ class DissertativaGraderService
     end
   end
 
-  def extrair_justificativa(text)
-    match = text.match(/JUSTIFICATIVA:\s*(.+)/i)
-    return match[1].strip if match
-
-    text.truncate(150)
-  end
-
   # --- Fallbacks ---
 
   def resultado_vazio
