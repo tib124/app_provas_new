@@ -1,63 +1,255 @@
-<div class="space-y-6">
+<div class="space-y-6 max-w-4xl mx-auto">
+  <%# ── Breadcrumb ── %>
   <div>
     <%= link_to provas_path, class: "inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors group" do %>
       <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      Provas
+      Voltar para Provas
     <% end %>
   </div>
 
-  <div>
-    <p class="text-sm font-semibold text-slate-600">Importar Provas</p>
-    <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Enviar várias provas de uma vez</h1>
-    <p class="mt-1 text-slate-600">Use um arquivo CSV para adicionar um conjunto de provas e suas questões de forma rápida.</p>
+  <%# ── Cabeçalho ── %>
+  <div class="flex items-start gap-4">
+    <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500 text-white shadow-md shadow-indigo-200/50">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Importar Provas via CSV</h1>
+      <p class="mt-1 text-slate-500">Adicione várias provas com suas questões de uma só vez usando uma planilha.</p>
+    </div>
   </div>
 
-  <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm ring-1 ring-black/5">
-    <div class="mb-6">
-      <h2 class="text-lg font-semibold text-slate-900">Como criar o arquivo</h2>
-      <p class="mt-2 text-sm text-slate-600">Abra Excel, Google Sheets ou qualquer editor de texto e coloque estas colunas na primeira linha. Cada prova e suas questões ficam em linhas separadas.</p>
+  <%# ── Passo a passo ── %>
+  <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm ring-1 ring-black/5 overflow-hidden">
 
-      <ul class="mt-4 list-disc list-inside text-sm text-slate-600 space-y-1">
-        <li><strong>prova_titulo</strong> – título da prova (obrigatório)</li>
-        <li><strong>aluno_ra</strong> – código do aluno, se houver (opcional)</li>
-        <li><strong>data_criacao</strong> – quando a prova foi feita, formato <code>YYYY-MM-DD</code> (opcional)</li>
-        <li><strong>questao_enunciado</strong> – texto da questão (obrigatório se houver questões)</li>
-        <li><strong>resposta_correta</strong> – alternativa certa; necessário para criar gabarito</li>
-        <li>as demais colunas (<code>questao_tipo</code>, <code>questao_peso</code>, <code>questao_respostas</code>, <code>resposta_colocada</code>) são opcionais e ajudam na configuração da questão</li>
-      </ul>
+    <%# Passo 1 — Preparar o arquivo %>
+    <div class="p-6 border-b border-slate-100">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">1</span>
+        <h2 class="text-lg font-semibold text-slate-900">Prepare sua planilha</h2>
+      </div>
+      <p class="text-sm text-slate-600 ml-11">Abra o <strong>Excel</strong>, <strong>Google Sheets</strong> ou qualquer editor e crie um arquivo com as colunas abaixo. Salve como <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">.csv</code></p>
 
-      <div class="mt-4 p-4 rounded-lg bg-blue-50 border border-blue-200">
-        <p class="text-sm text-blue-900"><strong>💡 Dicas fáceis:</strong></p>
-        <ul class="mt-2 text-sm text-blue-900 list-disc list-inside space-y-1">
-          <li>Cada linha corresponde a uma questão; repita título/aluno/data para agrupar linhas na mesma prova.</li>
-          <li>Se quiser só criar a prova sem nenhuma questão, deixe o campo de enunciado em branco.</li>
-          <li>Espaces extras nas respostas não importam: "B" é igual a " b ".</li>
-        </ul>
+      <%# Tabela de colunas %>
+      <div class="mt-4 ml-11 overflow-x-auto">
+        <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+          <thead>
+            <tr class="bg-slate-50 text-left">
+              <th class="px-3 py-2 font-semibold text-slate-700 border-b border-slate-200">Coluna</th>
+              <th class="px-3 py-2 font-semibold text-slate-700 border-b border-slate-200 text-center w-28">Obrigatório?</th>
+              <th class="px-3 py-2 font-semibold text-slate-700 border-b border-slate-200">O que colocar</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="px-3 py-2"><code class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded text-xs font-semibold">prova_titulo</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">Sim</span></td>
+              <td class="px-3 py-2 text-slate-600">Nome da prova — ex: "Prova 1 - Matemática"</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">aluno_ra</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600">RA do aluno (código de matrícula)</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">data_criacao</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600">Data da prova no formato <code class="bg-slate-100 px-1 rounded text-xs">AAAA-MM-DD</code> ou <code class="bg-slate-100 px-1 rounded text-xs">DD/MM/AAAA</code></td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded text-xs font-semibold">questao_enunciado</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Condicional</span></td>
+              <td class="px-3 py-2 text-slate-600">Texto da pergunta — obrigatório se quiser criar questões</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">questao_tipo</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600"><code class="bg-slate-100 px-1 rounded text-xs">multipla_escolha</code> ou <code class="bg-slate-100 px-1 rounded text-xs">dissertativa</code> (padrão: múltipla escolha)</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">questao_peso</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600">Peso/pontuação da questão — ex: <code class="bg-slate-100 px-1 rounded text-xs">1.0</code>, <code class="bg-slate-100 px-1 rounded text-xs">2.5</code></td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">questao_respostas</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600">Alternativas separadas por <code class="bg-slate-100 px-1 rounded text-xs">|</code> — ex: <code class="bg-slate-100 px-1 rounded text-xs">A) Sim | B) Não</code></td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">resposta_colocada</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">Não</span></td>
+              <td class="px-3 py-2 text-slate-600">Resposta que o aluno marcou</td>
+            </tr>
+            <tr>
+              <td class="px-3 py-2"><code class="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">resposta_correta</code></td>
+              <td class="px-3 py-2 text-center"><span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">Condicional</span></td>
+              <td class="px-3 py-2 text-slate-600">Gabarito da questão — necessário para correção automática</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="border-t border-slate-200 pt-6">
-      <%= form_with url: process_import_provas_path, method: :post, local: true, class: "space-y-4" do |f| %>
-        <div>
-          <%= f.label :csv_file, "Selecione o arquivo CSV", class: "block text-sm font-semibold text-slate-900" %>
-          <%= f.file_field :csv_file, accept: '.csv', class: "mt-2 block w-full rounded-xl border border-slate-300/80 bg-white/80 px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200", required: true %>
-          <p class="mt-1 text-xs text-slate-600">Apenas arquivos CSV são aceitos</p>
+    <%# Passo 2 — Entender a estrutura %>
+    <div class="p-6 border-b border-slate-100 bg-slate-50/40">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">2</span>
+        <h2 class="text-lg font-semibold text-slate-900">Entenda a lógica do arquivo</h2>
+      </div>
+      <div class="ml-11 space-y-3">
+        <div class="flex items-start gap-3 text-sm text-slate-700">
+          <svg class="w-5 h-5 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Cada linha = uma questão.</strong> Para cadastrar 3 questões na mesma prova, use 3 linhas com o mesmo <code class="bg-white px-1 rounded text-xs border border-slate-200">prova_titulo</code>.</p>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-slate-700">
+          <svg class="w-5 h-5 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Provas são agrupadas automaticamente</strong> pelo título + RA do aluno. Linhas com os mesmos dados ficam na mesma prova.</p>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-slate-700">
+          <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Prova sem questões?</strong> Basta deixar o enunciado em branco — só a prova será criada.</p>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-slate-700">
+          <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Espaços extras são ignorados.</strong> Escrever <code class="bg-white px-1 rounded text-xs border border-slate-200">B</code> ou <code class="bg-white px-1 rounded text-xs border border-slate-200"> b </code> dá no mesmo.</p>
+        </div>
+        <div class="flex items-start gap-3 text-sm text-slate-700">
+          <svg class="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p><strong>Separador automático:</strong> o sistema detecta se seu CSV usa vírgula (<code class="bg-white px-1 rounded text-xs border border-slate-200">,</code>) ou ponto-e-vírgula (<code class="bg-white px-1 rounded text-xs border border-slate-200">;</code>).</p>
+        </div>
+      </div>
+    </div>
+
+    <%# Passo 3 — Upload %>
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">3</span>
+        <h2 class="text-lg font-semibold text-slate-900">Envie o arquivo</h2>
+      </div>
+
+      <%= form_with url: process_import_provas_path, method: :post, local: true, class: "ml-11 space-y-5" do |f| %>
+        <div class="relative">
+          <label for="csv_file" class="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-6 py-8 text-center cursor-pointer transition hover:border-indigo-400 hover:bg-indigo-50/30 group">
+            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 group-hover:border-indigo-300 transition">
+              <svg class="w-6 h-6 text-slate-400 group-hover:text-indigo-500 transition" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-700 group-hover:text-indigo-700 transition">Clique para selecionar o arquivo CSV</p>
+              <p class="mt-1 text-xs text-slate-400">ou arraste e solte aqui &bull; Apenas <code class="bg-slate-100 px-1 rounded">.csv</code></p>
+            </div>
+          </label>
+          <%= f.file_field :csv_file, accept: '.csv', id: 'csv_file', class: "absolute inset-0 w-full h-full opacity-0 cursor-pointer", required: true %>
         </div>
 
-        <div class="flex gap-3 pt-2">
-          <%= f.submit "Importar provas", class: "inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-indigo-200/60 transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2" %>
-          <%= link_to "Cancelar", provas_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300/80 bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2" %>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <%= f.submit "Importar provas", class: "inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-sm shadow-indigo-200/60 transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 cursor-pointer" %>
+          <%= link_to "Cancelar", provas_path, class: "inline-flex items-center justify-center rounded-xl border border-slate-300/80 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2" %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <div class="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-6 ring-1 ring-black/5">
-    <h3 class="text-sm font-semibold text-slate-900">Exemplo de CSV</h3>
-    <pre class="mt-3 overflow-x-auto rounded-lg bg-white p-3 text-xs text-slate-700 border border-slate-200"><code>prova_titulo,aluno_ra,data_criacao,questao_enunciado,questao_tipo,questao_peso,questao_respostas,resposta_colocada,resposta_correta
-Prova 1 - Matemática,A234567-T123456,2026-02-12,Quanto é 2 + 2?,multipla_escolha,1.0,A) 3 | B) 4 | C) 5 | D) 6,,B
-Prova 1 - Matemática,A234567-T123456,2026-02-12,Qual é a raiz quadrada de 16?,multipla_escolha,1.0,A) 2 | B) 4 | C) 6 | D) 8,,B
-Prova 2 - História,A345678-T234567,2026-02-12,Em que ano foi descoberto o Brasil?,multipla_escolha,2.0,A) 1400 | B) 1500 | C) 1600 | D) 1700,,B</code></pre>
+  <%# ── Exemplo visual ── %>
+  <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm ring-1 ring-black/5">
+    <div class="flex items-center gap-2 mb-4">
+      <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+      <h3 class="text-base font-semibold text-slate-900">Exemplo prático</h3>
+    </div>
+
+    <p class="text-sm text-slate-600 mb-4">Veja como ficaria um CSV com 2 provas (uma de Matemática com 2 questões e uma de História com 1 questão):</p>
+
+    <%# Representação visual como tabela %>
+    <div class="overflow-x-auto mb-4">
+      <table class="text-xs border border-slate-200 rounded-lg w-full">
+        <thead>
+          <tr class="bg-indigo-50 text-indigo-800">
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">prova_titulo</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">aluno_ra</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">data_criacao</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">questao_enunciado</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">questao_tipo</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">questao_peso</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">questao_respostas</th>
+            <th class="px-2 py-1.5 font-semibold border-b border-r border-slate-200 text-left">resposta_correta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-blue-50/50">
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 font-medium text-blue-800">Prova 1 - Matemática</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A234567</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">2026-02-12</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-700">Quanto é 2 + 2?</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">multipla_escolha</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">1.0</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A) 3 | B) 4 | C) 5 | D) 6</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-emerald-700 font-medium">B</td>
+          </tr>
+          <tr class="bg-blue-50/50">
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 font-medium text-blue-800">Prova 1 - Matemática</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A234567</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">2026-02-12</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-700">Raiz quadrada de 16?</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">multipla_escolha</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">1.0</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A) 2 | B) 4 | C) 6 | D) 8</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-emerald-700 font-medium">B</td>
+          </tr>
+          <tr class="bg-amber-50/50">
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 font-medium text-amber-800">Prova 2 - História</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A345678</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">2026-02-12</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-700">Descobrimento do Brasil?</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">multipla_escolha</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">2.0</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-slate-600">A) 1400 | B) 1500 | C) 1600 | D) 1700</td>
+            <td class="px-2 py-1.5 border-b border-r border-slate-200 text-emerald-700 font-medium">B</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>
+      Repare que as duas primeiras linhas compartilham o mesmo título — elas pertencem à mesma prova.
+    </p>
+
+    <%# CSV bruto colapsável %>
+    <details class="group">
+      <summary class="cursor-pointer text-sm font-medium text-indigo-600 hover:text-indigo-800 transition select-none flex items-center gap-1.5">
+        <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+        Ver CSV bruto (para copiar e colar)
+      </summary>
+      <pre class="mt-3 overflow-x-auto rounded-lg bg-slate-50 p-3 text-xs text-slate-700 border border-slate-200"><code>prova_titulo,aluno_ra,data_criacao,questao_enunciado,questao_tipo,questao_peso,questao_respostas,resposta_colocada,resposta_correta
+Prova 1 - Matemática,A234567,2026-02-12,Quanto é 2 + 2?,multipla_escolha,1.0,A) 3 | B) 4 | C) 5 | D) 6,,B
+Prova 1 - Matemática,A234567,2026-02-12,Qual é a raiz quadrada de 16?,multipla_escolha,1.0,A) 2 | B) 4 | C) 6 | D) 8,,B
+Prova 2 - História,A345678,2026-02-12,Em que ano foi descoberto o Brasil?,multipla_escolha,2.0,A) 1400 | B) 1500 | C) 1600 | D) 1700,,B</code></pre>
+    </details>
+  </div>
+
+  <%# ── FAQ rápido ── %>
+  <div class="rounded-2xl border border-slate-200/80 bg-gradient-to-br from-amber-50/60 to-orange-50/40 p-6 ring-1 ring-black/5">
+    <div class="flex items-center gap-2 mb-4">
+      <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+      <h3 class="text-base font-semibold text-slate-900">Perguntas frequentes</h3>
+    </div>
+    <div class="space-y-3 text-sm">
+      <details class="group">
+        <summary class="cursor-pointer font-medium text-slate-800 hover:text-indigo-700 transition select-none">Posso importar questões dissertativas?</summary>
+        <p class="mt-1.5 ml-0.5 text-slate-600">Sim! Use <code class="bg-white/80 px-1 rounded text-xs border border-slate-200">dissertativa</code> na coluna <code class="bg-white/80 px-1 rounded text-xs border border-slate-200">questao_tipo</code>. Nesse caso, deixe <code class="bg-white/80 px-1 rounded text-xs border border-slate-200">questao_respostas</code> em branco e preencha <code class="bg-white/80 px-1 rounded text-xs border border-slate-200">resposta_correta</code> com a resposta esperada.</p>
+      </details>
+      <details class="group">
+        <summary class="cursor-pointer font-medium text-slate-800 hover:text-indigo-700 transition select-none">O que acontece se uma prova com o mesmo título já existir?</summary>
+        <p class="mt-1.5 ml-0.5 text-slate-600">O sistema verifica por título e aluno. Se já existir uma prova idêntica, ela será ignorada e as demais serão importadas normalmente.</p>
+      </details>
+      <details class="group">
+        <summary class="cursor-pointer font-medium text-slate-800 hover:text-indigo-700 transition select-none">Meu Excel salvou com ponto-e-vírgula, funciona?</summary>
+        <p class="mt-1.5 ml-0.5 text-slate-600">Funciona! O sistema detecta automaticamente se o separador é vírgula ou ponto-e-vírgula.</p>
+      </details>
+      <details class="group">
+        <summary class="cursor-pointer font-medium text-slate-800 hover:text-indigo-700 transition select-none">Preciso preencher todas as colunas?</summary>
+        <p class="mt-1.5 ml-0.5 text-slate-600">Não. Somente <code class="bg-white/80 px-1 rounded text-xs border border-slate-200">prova_titulo</code> é obrigatório. As demais colunas podem ser omitidas ou deixadas em branco.</p>
+      </details>
+    </div>
   </div>
 </div>
 
