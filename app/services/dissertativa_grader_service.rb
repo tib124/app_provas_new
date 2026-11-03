@@ -1,39 +1,45 @@
+
 # frozen_string_literal: true
 
 require "faraday"
 require "json"
+require "set"
 
 class DissertativaGraderService
-  GROQ_MODEL = "llama-3.3-70b-versatile"
+  GROQ_MODEL = "openai/gpt-oss-120b"
   GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-  # Avalia uma resposta dissertativa usando Groq (Llama 3.3 70B)
-  # Retorna: { avaliacao: "total"|"parcial"|"incorreta", justificativa: "..." }
   def initialize(enunciado:, resposta_aluno:, resposta_gabarito:)
     @enunciado = enunciado
     @resposta_aluno = resposta_aluno
     @resposta_gabarito = resposta_gabarito
   end
 
-  def call
-    return resultado_vazio if @resposta_aluno.blank?
-    return fallback_sem_api unless api_key_presente?
-
-    avaliar_com_ia
-  rescue Faraday::Error, JSON::ParserError, StandardError => e
-    Rails.logger.error("[DissertativaGrader] Erro ao chamar IA: #{e.message}")
-    fallback_comparacao_simples
-  end
-
-  private
-
   def api_key_presente?
     api_key.present?
   end
 
+  def call
+    return resultado_vazio if @resposta_aluno.blank?
+
+    unless api_key_presente?
+      Rails.logger.error("[DissertativaGrader] API KEY AUSENTE")
+      return fallback_sem_api
+    end
+
+    avaliar_com_ia
+
+  rescue StandardError => e
+    Rails.logger.error(
+      "[DissertativaGrader] #{e.class}: #{e.message}"
+    )
+
+    fallback_comparacao_simples
+  end
+
   def api_key
     @api_key ||= ENV["GROQ_API_KEY"].presence ||
-                 (Rails.application.config.respond_to?(:groq_api_key) && Rails.application.config.groq_api_key)
+      (Rails.application.config.groq_api_key if Rails.application.config.respond_to?(:groq_api_key))
   end
 
   def avaliar_com_ia
@@ -52,7 +58,10 @@ class DissertativaGraderService
       return parse_response(response.body)
     end
 
-    Rails.logger.error("[DissertativaGrader] Groq retornou #{response.status}: #{response.body[0..300]}")
+    Rails.logger.error(
+      "[DissertativaGrader] Groq retornou #{response.status}: #{response.body[0..300]}"
+    )
+
     fallback_comparacao_simples
   end
 
@@ -63,12 +72,12 @@ class DissertativaGraderService
         {
           role: "system",
           content: <<~SYS.chomp
-            Você é um professor que corrige provas. Sua tarefa é fornecer **até três linhas** no seguinte formato:
-            Linha 1: AVALIACAO: <total|parcial|incorreta>
-            Linha 2: JUSTIFICATIVA: <uma explicação rica de pelo menos duas frases>
-            Linha 3: (opcional) qualquer complemento curto, mas o total não pode exceder três linhas.
+            Você é um professor que corrige provas. Sua tarefa é fornecer até três linhas no seguinte formato:
+            Linha 1: AVALIACAO: <total|parcial|incorreta>
+            Linha 2: JUSTIFICATIVA: <uma explicação rica de pelo menos duas frases>
+            Linha 3: (opcional) qualquer complemento curto, mas o total não pode exceder três linhas.
 
-            **Quando a resposta estiver incorreta ou parcial, a justificativa deve detalhar por que foi errada**, mencionando os conceitos envolvidos e onde o aluno se enganou. Não escreva mais que três linhas no total. Não inclua instruções para o aluno ou linguagem de sistema.
+            Quando a resposta estiver incorreta ou parcial, a justificativa deve detalhar por que foi errada, mencionando os conceitos envolvidos e onde o aluno se enganou. Não escreva mais que três linhas no total. Não inclua instruções para o aluno ou linguagem de sistema.
           SYS
         },
         {
@@ -94,27 +103,31 @@ class DissertativaGraderService
     PROMPT
   end
 
-  def parse_response(body)
-    data = JSON.parse(body)
-    text = data.dig("choices", 0, "message", "content").to_s.strip
 
-    # split on lines up to 3; ignore extras
-    lines = text.split("\n").map(&:strip)
-    avaliacao = extrair_avaliacao(lines.first.to_s)
-    # take up to two additional lines for justification
-    justificativa = lines[1..2]&.join(" ")&.strip.to_s
+def parse_response(body)
+  data = JSON.parse(body)
+  response_text = data.dig("choices", 0, "message", "content").to_s.strip
 
-    {
-      avaliacao: avaliacao,
-      justificativa: justificativa
-    }
-  end
+  avaliacao = extrair_avaliacao(response_text)
+
+  justificativa = response_text
+    .gsub(/AVALIACAO:\s*(total|parcial|incorreta)/i, "")
+    .gsub(/JUSTIFICATIVA:\s*/i, "")
+    .strip
+
+  {
+    avaliacao: avaliacao,
+    justificativa: justificativa.presence || "A IA não forneceu uma justificativa."
+  }
+end
+
 
   def extrair_avaliacao(text)
     match = text.match(/AVALIACAO:\s*(total|parcial|incorreta)/i)
     return match[1].downcase if match
 
     texto_lower = text.downcase
+
     if texto_lower.include?("total")
       "total"
     elsif texto_lower.include?("parcial")
@@ -124,7 +137,7 @@ class DissertativaGraderService
     end
   end
 
-  # --- Fallbacks ---
+  # Fallbacks
 
   def resultado_vazio
     {
@@ -134,7 +147,10 @@ class DissertativaGraderService
   end
 
   def fallback_sem_api
-    Rails.logger.warn("[DissertativaGrader] GROQ_API_KEY não configurada. Usando comparação simples.")
+    Rails.logger.warn(
+      "[DissertativaGrader] GROQ_API_KEY não configurada. Usando comparação simples."
+    )
+
     fallback_comparacao_simples
   end
 
@@ -143,11 +159,20 @@ class DissertativaGraderService
     normalizada_gabarito = normalize(@resposta_gabarito)
 
     if normalizada_aluno == normalizada_gabarito
-      { avaliacao: "total", justificativa: "Resposta idêntica ao gabarito." }
+      {
+        avaliacao: "total",
+        justificativa: "Resposta idêntica ao gabarito."
+      }
     elsif palavras_em_comum_percentual(normalizada_aluno, normalizada_gabarito) >= 0.5
-      { avaliacao: "parcial", justificativa: "Resposta parcialmente similar ao gabarito (configure GROQ_API_KEY para avaliação com IA)." }
+      {
+        avaliacao: "parcial",
+        justificativa: "Resposta parcialmente similar ao gabarito."
+      }
     else
-      { avaliacao: "incorreta", justificativa: "Resposta diferente do gabarito (configure GROQ_API_KEY para avaliação com IA)." }
+      {
+        avaliacao: "incorreta",
+        justificativa: "Resposta diferente do gabarito."
+      }
     end
   end
 
